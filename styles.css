@@ -14835,7 +14835,7 @@ body,
 }
 
 .postfolio-current-page .postfolio-red-pushpin .postfolio-red-decor-float {
-  filter: hue-rotate(143deg) saturate(7.4) brightness(.45) contrast(.85);
+  filter: hue-rotate(143deg) saturate(3.2) brightness(.32) contrast(.9);
 }
 
 .postfolio-final-action {
