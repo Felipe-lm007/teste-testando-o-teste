@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const header = root.querySelector('.site-header');
   const menuButton = root.querySelector('.menu-button');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const compactAmbient = matchMedia('(max-width: 767px), (hover: none), (pointer: coarse)');
   const defaultDocumentTitle = document.title;
 
   const loadDeferredMedia = (container) => {
@@ -732,15 +733,23 @@ document.addEventListener('DOMContentLoaded', () => {
     let ambientRequest = 0;
     let readoutFrame = 0;
 
-    const resizeAmbient = () => {
+    const resizeAmbient = (force = false) => {
+      const nextWidth = innerWidth;
+      const nextHeight = innerHeight;
+      // Mobile browsers resize the visual viewport while their address bar
+      // appears during an upward scroll. Reallocating the canvas on every one
+      // of those height-only changes is expensive and makes the page stutter.
+      if (!force && compactAmbient.matches && width && Math.abs(nextWidth - width) < 2)
+        return false;
       const ratio = Math.min(devicePixelRatio || 1, 1.35);
-      width = innerWidth;
-      height = innerHeight;
+      width = nextWidth;
+      height = nextHeight;
       ambientCanvas.width = Math.round(width * ratio);
       ambientCanvas.height = Math.round(height * ratio);
       ambientCanvas.style.width = `${width}px`;
       ambientCanvas.style.height = `${height}px`;
       context?.setTransform(ratio, 0, 0, ratio, 0, 0);
+      return true;
     };
 
     const renderAmbient = (time = 0) => {
@@ -804,13 +813,18 @@ document.addEventListener('DOMContentLoaded', () => {
         readout.textContent = `${Math.round(hue)}° · ${Math.round(saturation)}%`;
         root.style.setProperty('--ambient-hue', String(Math.round(hue)));
       }
-      ambientRequest = reducedMotion.matches
+      ambientRequest = reducedMotion.matches || compactAmbient.matches || document.hidden
         ? 0
         : requestAnimationFrame(renderAmbient);
     };
 
     const startAmbient = () => {
-      if (!ambientRequest && !document.hidden && !reducedMotion.matches)
+      if (
+        !ambientRequest
+        && !document.hidden
+        && !reducedMotion.matches
+        && !compactAmbient.matches
+      )
         ambientRequest = requestAnimationFrame(renderAmbient);
     };
     const stopAmbient = () => {
@@ -818,10 +832,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ambientRequest = 0;
     };
     const handleVisibility = () => (document.hidden ? stopAmbient() : startAmbient());
-    const handleMotionPreference = () => {
+    const resetAmbient = () => {
       stopAmbient();
+      resizeAmbient(true);
       renderAmbient(0);
-      if (!reducedMotion.matches) startAmbient();
       requestScroll();
     };
 
@@ -838,24 +852,31 @@ document.addEventListener('DOMContentLoaded', () => {
           renderAmbient(0);
         }
     };
-    addEventListener('pointermove', (event) => updatePointer(event.clientX, event.clientY), {
-      passive: true,
-    });
-    addEventListener('pointerdown', (event) => updatePointer(event.clientX, event.clientY), {
-      passive: true,
-    });
-    addEventListener(
-      'touchmove',
-      (event) => {
-        const touch = event.touches[0];
-        if (touch) updatePointer(touch.clientX, touch.clientY);
-      },
-      { passive: true },
-    );
-    addEventListener('resize', resizeAmbient, { passive: true });
+    const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+    if (finePointer.matches) {
+      addEventListener('pointermove', (event) => updatePointer(event.clientX, event.clientY), {
+        passive: true,
+      });
+      addEventListener('pointerdown', (event) => updatePointer(event.clientX, event.clientY), {
+        passive: true,
+      });
+    }
+
+    let ambientResizeFrame = 0;
+    const requestAmbientResize = () => {
+      if (ambientResizeFrame) return;
+      ambientResizeFrame = requestAnimationFrame(() => {
+        ambientResizeFrame = 0;
+        if (resizeAmbient() && (compactAmbient.matches || reducedMotion.matches))
+          renderAmbient(0);
+      });
+    };
+
+    addEventListener('resize', requestAmbientResize, { passive: true });
     document.addEventListener('visibilitychange', handleVisibility);
-    reducedMotion.addEventListener?.('change', handleMotionPreference);
-    resizeAmbient();
+    reducedMotion.addEventListener?.('change', resetAmbient);
+    compactAmbient.addEventListener?.('change', resetAmbient);
+    resizeAmbient(true);
     renderAmbient(0);
   }
 
