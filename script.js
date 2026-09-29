@@ -702,15 +702,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentPortfolio) currentPortfolio.inert = true;
 
   let scrollFrame = 0;
+  let mobileScrollIdle = 0;
+  const pauseMobileMotion = () => {
+    if (!compactAmbient.matches) return;
+    root.classList.add('is-mobile-scrolling');
+    clearTimeout(mobileScrollIdle);
+  };
+  const resumeMobileMotionSoon = () => {
+    if (!compactAmbient.matches) return;
+    clearTimeout(mobileScrollIdle);
+    mobileScrollIdle = setTimeout(() => root.classList.remove('is-mobile-scrolling'), 220);
+  };
   const updateScroll = () => {
     scrollFrame = 0;
     header?.classList.toggle('is-scrolled', scrollY > 32);
   };
   const requestScroll = () => {
     if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScroll);
+    pauseMobileMotion();
+    resumeMobileMotionSoon();
   };
   addEventListener('scroll', requestScroll, { passive: true });
   addEventListener('resize', requestScroll, { passive: true });
+  addEventListener('touchstart', pauseMobileMotion, { passive: true });
+  addEventListener('touchend', resumeMobileMotionSoon, { passive: true });
+  addEventListener('touchcancel', resumeMobileMotionSoon, { passive: true });
   updateScroll();
 
 

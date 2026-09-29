@@ -15685,9 +15685,17 @@ body,
     scroll-behavior: auto;
   }
 
-  body,
-  .landing-page {
+  body {
     background: #030b1c;
+  }
+
+  .landing-page {
+    background:
+      radial-gradient(circle at 8% 7%, rgb(24 87 145 / .34) 0, transparent 18rem),
+      radial-gradient(circle at 92% 28%, rgb(54 66 164 / .28) 0, transparent 20rem),
+      radial-gradient(circle at 12% 57%, rgb(22 82 142 / .26) 0, transparent 22rem),
+      radial-gradient(circle at 88% 83%, rgb(63 48 139 / .24) 0, transparent 21rem),
+      linear-gradient(180deg, #030b1c 0%, #06152f 48%, #020611 100%);
   }
 
   .landing-page .ambient-canvas,
@@ -15705,15 +15713,18 @@ body,
     filter: none !important;
   }
 
-  .photo-film-track,
-  .ticker div,
-  .collage-ribbon div,
-  .collage-star,
-  .collage-sticker,
-  .contact-hanging-phone-swing,
-  .postfolio-scene.is-current-portfolio-open .postfolio-current-page.is-active .postfolio-red-decor,
-  .postfolio-scene.is-current-portfolio-open .postfolio-current-page.is-active .postfolio-red-decor-float {
-    animation: none !important;
-    will-change: auto !important;
+  .ticker div {
+    animation-duration: 36s;
+  }
+
+  .contact-hanging-phone-swing {
+    animation-duration: 7s;
+  }
+
+  .landing-page.is-mobile-scrolling .ticker div,
+  .landing-page.is-mobile-scrolling .contact-hanging-phone-swing,
+  .landing-page.is-mobile-scrolling .postfolio-scene.is-current-portfolio-open .postfolio-current-page.is-active .postfolio-red-decor,
+  .landing-page.is-mobile-scrolling .postfolio-scene.is-current-portfolio-open .postfolio-current-page.is-active .postfolio-red-decor-float {
+    animation-play-state: paused !important;
   }
 }
