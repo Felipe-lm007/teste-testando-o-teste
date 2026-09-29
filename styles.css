@@ -13606,7 +13606,7 @@ body,
   object-fit: contain;
   object-position: center;
   clip-path: none;
-  filter: saturate(.66) brightness(.92) drop-shadow(0 4px 3px rgba(12, 25, 34, .34)) !important;
+  filter: drop-shadow(0 4px 3px rgba(44, 12, 23, .34)) !important;
   transform-origin: 50% 82%;
 }
 .postfolio-real-star {
@@ -14835,7 +14835,7 @@ body,
 }
 
 .postfolio-current-page .postfolio-red-pushpin .postfolio-red-decor-float {
-  filter: hue-rotate(143deg) saturate(3.2) brightness(.32) contrast(.9);
+  filter: none;
 }
 
 .postfolio-final-action {
