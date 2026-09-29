@@ -15694,4 +15694,13 @@ body,
     font-size: clamp(6.5px, 2.2vw, 8px);
     letter-spacing: .08em;
   }
+  /* TESTE — manter cor original das taxinhas */
+@media (max-width: 1023px) {
+  .landing-page .postfolio-real-pin,
+  .landing-page .postfolio-main-card .postfolio-real-pin,
+  .landing-page .postfolio-note .postfolio-real-pin,
+  .landing-page .postfolio-mini-card .postfolio-real-pin {
+    filter: none !important;
+  }
+}
 }
