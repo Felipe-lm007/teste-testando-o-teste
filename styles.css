@@ -15677,3 +15677,43 @@ body,
     letter-spacing: .08em;
   }
 }
+
+/* iOS/mobile scroll performance: avoid fixed raster layers and continuously
+   animated blurred elements while Safari changes its browser chrome. */
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body,
+  .landing-page {
+    background: #030b1c;
+  }
+
+  .landing-page .ambient-canvas,
+  .landing-page .ambient-readout,
+  .landing-page .about-light-orbs {
+    display: none !important;
+  }
+
+  .landing-page .hero,
+  .landing-page .hero-simple-copy {
+    min-height: 100svh !important;
+  }
+
+  .landing-page .about-isabelle .about-poster {
+    filter: none !important;
+  }
+
+  .photo-film-track,
+  .ticker div,
+  .collage-ribbon div,
+  .collage-star,
+  .collage-sticker,
+  .contact-hanging-phone-swing,
+  .postfolio-scene.is-current-portfolio-open .postfolio-current-page.is-active .postfolio-red-decor,
+  .postfolio-scene.is-current-portfolio-open .postfolio-current-page.is-active .postfolio-red-decor-float {
+    animation: none !important;
+    will-change: auto !important;
+  }
+}

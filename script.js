@@ -716,7 +716,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ambientCanvas = root.querySelector('.ambient-canvas');
   const readout = root.querySelector('.ambient-readout span');
-  if (ambientCanvas instanceof HTMLCanvasElement) {
+  // Fixed canvases are particularly expensive in iOS Safari because the
+  // browser chrome changes the visual viewport while the user scrolls. The
+  // compact layout uses a CSS background instead, so do not even allocate a
+  // canvas backing store on touch/mobile devices.
+  if (ambientCanvas instanceof HTMLCanvasElement && !compactAmbient.matches) {
     const context = ambientCanvas.getContext('2d', { alpha: false });
     const pointer = { x: 0.5, y: 0.5 };
     const smooth = { x: 0.5, y: 0.5 };
